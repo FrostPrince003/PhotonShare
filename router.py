@@ -171,12 +171,11 @@ async def delete_user(
         raise HTTPException(status_code=500, detail=f"Error deleting user: {e}")
 
 
-
 @docRouter.post("/get-uploads")
 async def get_uploaded_files(
+    request: Request,  # This should come first
     name: str = Form(...),
     password: str = Form(...),
-    request: Request,  # Add this to get runtime info about the app
     db: AsyncIOMotorDatabase = Depends(get_database),
 ):
     """
