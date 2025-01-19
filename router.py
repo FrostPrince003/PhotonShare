@@ -10,6 +10,7 @@ from pydantic import BaseModel
 import asyncio
 from datetime import datetime, timedelta
 from starlette.responses import JSONResponse
+from fastapi import Request
 
 # Define a router for handling the requests
 docRouter = APIRouter()
@@ -170,10 +171,12 @@ async def delete_user(
         raise HTTPException(status_code=500, detail=f"Error deleting user: {e}")
 
 
+
 @docRouter.post("/get-uploads")
 async def get_uploaded_files(
     name: str = Form(...),
     password: str = Form(...),
+    request: Request,  # Add this to get runtime info about the app
     db: AsyncIOMotorDatabase = Depends(get_database),
 ):
     """
@@ -189,9 +192,10 @@ async def get_uploaded_files(
         if not user_uploads:
             raise HTTPException(status_code=404, detail="No files found for the provided credentials.")
 
-        # Modify file paths to be accessible URLs
+        # Modify file paths to be accessible URLs dynamically
+        base_url = str(request.base_url).rstrip("/")
         for file in user_uploads["files"]:
-            file["file_path"] = f"http://localhost:8000/uploads/{file['stored_filename']}"
+            file["file_path"] = f"{base_url}/uploads/{file['stored_filename']}"
 
         return {
             "message": "Files retrieved successfully",
