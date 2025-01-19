@@ -191,7 +191,7 @@ async def get_uploaded_files(
 
         # Modify file paths to be accessible URLs
         for file in user_uploads["files"]:
-            file["file_path"] = f"http://192.168.61.33:8000/uploads/{file['stored_filename']}"
+            file["file_path"] = f"http://0.0.0.0:8000/uploads/{file['stored_filename']}"
 
         return {
             "message": "Files retrieved successfully",
